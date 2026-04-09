@@ -14,7 +14,176 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      books: {
+        Row: {
+          author: string | null
+          created_at: string
+          date_added: string
+          finish_date: string | null
+          genre: string | null
+          id: string
+          pages_read: number
+          rating: number | null
+          review_notes: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["book_status"]
+          tags: string[] | null
+          title: string
+          total_pages: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
+          date_added?: string
+          finish_date?: string | null
+          genre?: string | null
+          id?: string
+          pages_read?: number
+          rating?: number | null
+          review_notes?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["book_status"]
+          tags?: string[] | null
+          title: string
+          total_pages?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          date_added?: string
+          finish_date?: string | null
+          genre?: string | null
+          id?: string
+          pages_read?: number
+          rating?: number | null
+          review_notes?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["book_status"]
+          tags?: string[] | null
+          title?: string
+          total_pages?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      list_books: {
+        Row: {
+          book_id: string
+          id: string
+          list_id: string
+        }
+        Insert: {
+          book_id: string
+          id?: string
+          list_id: string
+        }
+        Update: {
+          book_id?: string
+          id?: string
+          list_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "list_books_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "list_books_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lists: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      public_posts: {
+        Row: {
+          book_id: string | null
+          content: string
+          created_at: string
+          id: string
+          is_public: boolean
+          user_id: string
+        }
+        Insert: {
+          book_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          user_id: string
+        }
+        Update: {
+          book_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_posts_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +192,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      book_status: "want_to_read" | "reading" | "read"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +319,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      book_status: ["want_to_read", "reading", "read"],
+    },
   },
 } as const
