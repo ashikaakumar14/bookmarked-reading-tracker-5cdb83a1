@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageCircle, Send, X, Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import ReactMarkdown from 'react-markdown';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
