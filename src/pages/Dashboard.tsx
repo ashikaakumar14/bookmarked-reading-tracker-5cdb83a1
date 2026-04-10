@@ -79,8 +79,8 @@ const Dashboard = () => {
           </Card>
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/80">
-                <Hash className="h-5 w-5 text-secondary-foreground" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <Hash className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <p className="text-lg font-bold text-foreground truncate">{topGenreThisMonth || '—'}</p>
