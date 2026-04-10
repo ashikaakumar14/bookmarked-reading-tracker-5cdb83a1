@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AddBookForm from '@/components/AddBookForm';
+import BrowseBooks from '@/components/BrowseBooks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -22,6 +23,7 @@ const AddPage = () => {
   const [postBookId, setPostBookId] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [bookTab, setBookTab] = useState<'browse' | 'manual'>('browse');
 
   const handlePost = async () => {
     if (!postContent.trim() || !user) return;
@@ -57,15 +59,37 @@ const AddPage = () => {
             <TabsTrigger value="post" className="flex-1">Post</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="book" className="mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Add a new book</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AddBookForm onSuccess={() => navigate('/')} />
-              </CardContent>
-            </Card>
+          <TabsContent value="book" className="mt-4 space-y-4">
+            {/* Sub-tabs: Browse vs Manual */}
+            <div className="flex gap-2">
+              <Button
+                variant={bookTab === 'browse' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setBookTab('browse')}
+              >
+                Browse
+              </Button>
+              <Button
+                variant={bookTab === 'manual' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setBookTab('manual')}
+              >
+                Add Manually
+              </Button>
+            </div>
+
+            {bookTab === 'browse' ? (
+              <BrowseBooks onSuccess={() => navigate('/')} />
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Add a new book</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <AddBookForm onSuccess={() => navigate('/')} />
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="post" className="mt-4">
