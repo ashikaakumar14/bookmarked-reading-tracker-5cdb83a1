@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageCircle, Send, X, Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import ReactMarkdown from 'react-markdown';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -170,8 +169,8 @@ const ReadingChat = () => {
                   }`}
                 >
                   {msg.role === 'assistant' ? (
-                    <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 whitespace-pre-wrap">
+                      {msg.content}
                     </div>
                   ) : (
                     msg.content
