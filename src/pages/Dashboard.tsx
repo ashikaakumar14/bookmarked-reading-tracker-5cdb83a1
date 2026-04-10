@@ -54,7 +54,7 @@ const Dashboard = () => {
 
       <div className="px-4 space-y-5">
         {/* Stats row */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
@@ -74,6 +74,17 @@ const Dashboard = () => {
               <div>
                 <p className="text-2xl font-bold text-foreground">{booksReadThisYear.length}</p>
                 <p className="text-xs text-muted-foreground">Read this year</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/80">
+                <Hash className="h-5 w-5 text-secondary-foreground" />
+              </div>
+              <div>
+                <p className="text-lg font-bold text-foreground truncate">{topGenreThisMonth || '—'}</p>
+                <p className="text-xs text-muted-foreground">Top genre</p>
               </div>
             </CardContent>
           </Card>
