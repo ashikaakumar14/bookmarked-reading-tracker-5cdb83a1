@@ -1,53 +1,84 @@
-import { cn } from '@/lib/utils';
-
-interface ReadingRingProps {
-  title: string;
-  pagesRead: number;
-  totalPages: number;
-  color: string;
-  size?: number;
-  strokeWidth?: number;
+interface ConcentricRingsProps {
+  books: {
+    id: string;
+    title: string;
+    pagesRead: number;
+    totalPages: number;
+  }[];
 }
 
-const ReadingRing = ({ title, pagesRead, totalPages, color, size = 100, strokeWidth = 8 }: ReadingRingProps) => {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const progress = totalPages > 0 ? Math.min(pagesRead / totalPages, 1) : 0;
-  const offset = circumference - progress * circumference;
-  const percent = Math.round(progress * 100);
+const ringColors = [
+  { dark: 'hsl(25, 75%, 47%)', light: 'hsl(25, 60%, 85%)' },
+  { dark: 'hsl(150, 40%, 40%)', light: 'hsl(150, 30%, 82%)' },
+  { dark: 'hsl(210, 60%, 50%)', light: 'hsl(210, 40%, 84%)' },
+  { dark: 'hsl(340, 55%, 50%)', light: 'hsl(340, 40%, 85%)' },
+  { dark: 'hsl(45, 75%, 50%)', light: 'hsl(45, 50%, 84%)' },
+  { dark: 'hsl(270, 50%, 55%)', light: 'hsl(270, 35%, 85%)' },
+];
+
+const ConcentricRings = ({ books }: ConcentricRingsProps) => {
+  const size = 240;
+  const strokeWidth = 14;
+  const gap = 6;
+
+  if (books.length === 0) return null;
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke="hsl(var(--muted))"
-            strokeWidth={strokeWidth}
-          />
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth={strokeWidth}
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            className="transition-all duration-700"
-          />
+          {books.map((book, i) => {
+            const radius = (size / 2) - (strokeWidth / 2) - i * (strokeWidth + gap);
+            if (radius <= 0) return null;
+            const circumference = 2 * Math.PI * radius;
+            const progress = book.totalPages > 0 ? Math.min(book.pagesRead / book.totalPages, 1) : 0;
+            const offset = circumference - progress * circumference;
+            const colors = ringColors[i % ringColors.length];
+
+            return (
+              <g key={book.id}>
+                <circle
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  fill="none"
+                  stroke={colors.light}
+                  strokeWidth={strokeWidth}
+                />
+                <circle
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  fill="none"
+                  stroke={colors.dark}
+                  strokeWidth={strokeWidth}
+                  strokeDasharray={circumference}
+                  strokeDashoffset={offset}
+                  strokeLinecap="round"
+                  className="transition-all duration-700"
+                />
+              </g>
+            );
+          })}
         </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-sm font-semibold text-foreground">{percent}%</span>
-        </div>
       </div>
-      <p className="max-w-[100px] truncate text-xs text-muted-foreground text-center">{title}</p>
+
+      {/* Legend */}
+      <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1">
+        {books.map((book, i) => {
+          const colors = ringColors[i % ringColors.length];
+          const pct = book.totalPages > 0 ? Math.round((book.pagesRead / book.totalPages) * 100) : 0;
+          return (
+            <div key={book.id} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: colors.dark }} />
+              <span className="max-w-[120px] truncate">{book.title}</span>
+              <span className="font-medium text-foreground">{pct}%</span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
 
-export default ReadingRing;
+export default ConcentricRings;

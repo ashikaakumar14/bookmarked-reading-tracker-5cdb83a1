@@ -1,20 +1,12 @@
 import { useBooks } from '@/hooks/useBooks';
 import { useAuth } from '@/hooks/useAuth';
-import ReadingRing from '@/components/ReadingRing';
+import ConcentricRings from '@/components/ReadingRing';
 import BookCard from '@/components/BookCard';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { BookOpen, TrendingUp, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ThemeToggle from '@/components/ThemeToggle';
-
-const ringColors = [
-  'hsl(25, 75%, 47%)',
-  'hsl(150, 40%, 45%)',
-  'hsl(210, 60%, 55%)',
-  'hsl(340, 60%, 55%)',
-  'hsl(45, 80%, 50%)',
-];
 
 const Dashboard = () => {
   const { books, isLoading } = useBooks();
@@ -25,10 +17,10 @@ const Dashboard = () => {
     if (b.status !== 'read' || !b.finish_date) return false;
     return new Date(b.finish_date).getFullYear() === new Date().getFullYear();
   });
-  const recentBooks = books.slice(0, 5);
 
   return (
     <div className="min-h-screen pb-24">
+      {/* Header */}
       <header className="flex items-center justify-between p-4 pt-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">My Reading</h1>
@@ -43,7 +35,7 @@ const Dashboard = () => {
       </header>
 
       <div className="px-4 space-y-5">
-        {/* Stats cards */}
+        {/* Stats row */}
         <div className="grid grid-cols-2 gap-3">
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
@@ -69,30 +61,22 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Reading progress rings */}
+        {/* Concentric progress rings */}
         {isLoading ? (
-          <div className="flex gap-4 overflow-x-auto py-2">
-            {[1, 2, 3].map(i => <Skeleton key={i} className="h-32 w-24 rounded-xl" />)}
+          <div className="flex justify-center py-8">
+            <Skeleton className="h-60 w-60 rounded-full" />
           </div>
         ) : currentlyReading.length > 0 ? (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Reading Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-6 overflow-x-auto py-2">
-                {currentlyReading.map((book, i) => (
-                  <ReadingRing
-                    key={book.id}
-                    title={book.title}
-                    pagesRead={book.pages_read}
-                    totalPages={book.total_pages || 0}
-                    color={ringColors[i % ringColors.length]}
-                  />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex justify-center py-2">
+            <ConcentricRings
+              books={currentlyReading.map(b => ({
+                id: b.id,
+                title: b.title,
+                pagesRead: b.pages_read,
+                totalPages: b.total_pages || 0,
+              }))}
+            />
+          </div>
         ) : (
           <Card>
             <CardContent className="py-8 text-center">
@@ -103,12 +87,12 @@ const Dashboard = () => {
           </Card>
         )}
 
-        {/* Recent books */}
-        {recentBooks.length > 0 && (
+        {/* Books in progress details */}
+        {currentlyReading.length > 0 && (
           <div>
-            <h2 className="mb-3 text-base font-semibold text-foreground">Recent Books</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">In Progress</h2>
             <div className="space-y-3">
-              {recentBooks.map(book => (
+              {currentlyReading.map(book => (
                 <BookCard key={book.id} book={book} />
               ))}
             </div>
