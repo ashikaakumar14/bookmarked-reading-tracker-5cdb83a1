@@ -100,6 +100,8 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      <ReadingChat />
     </div>
   );
 };
