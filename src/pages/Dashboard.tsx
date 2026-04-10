@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import ConcentricRings from '@/components/ReadingRing';
 import BookCard from '@/components/BookCard';
 import { Card, CardContent } from '@/components/ui/card';
-import { BookOpen, TrendingUp, LogOut } from 'lucide-react';
+import { BookOpen, TrendingUp, LogOut, Hash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -19,6 +19,19 @@ const Dashboard = () => {
     if (b.status !== 'read' || !b.finish_date) return false;
     return new Date(b.finish_date).getFullYear() === new Date().getFullYear();
   });
+
+  // Top genre this month
+  const now = new Date();
+  const topGenreThisMonth = (() => {
+    const monthBooks = books.filter(b => {
+      const added = new Date(b.date_added);
+      return added.getMonth() === now.getMonth() && added.getFullYear() === now.getFullYear() && b.genre;
+    });
+    if (!monthBooks.length) return null;
+    const counts: Record<string, number> = {};
+    monthBooks.forEach(b => { if (b.genre) counts[b.genre] = (counts[b.genre] || 0) + 1; });
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+  })();
 
   return (
     <div className="min-h-screen pb-24">
