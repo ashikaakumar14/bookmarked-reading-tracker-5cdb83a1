@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import bookmarkedLogo from '@/assets/bookmarked-logo.png';
 
 const Login = () => {
   const { signIn, user, loading } = useAuth();
@@ -32,11 +32,11 @@ const Login = () => {
     <div className="flex min-h-screen items-center justify-center p-4 bg-background">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <BookOpen className="h-6 w-6 text-primary" />
+          <div className="mx-auto mb-2">
+            <img src={bookmarkedLogo} alt="Bookmarked logo" width={48} height={48} />
           </div>
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to your reading tracker</CardDescription>
+          <CardDescription>Sign in to Bookmarked</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">

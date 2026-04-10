@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ThemeToggle from '@/components/ThemeToggle';
 import ReadingChat from '@/components/ReadingChat';
+import bookmarkedLogo from '@/assets/bookmarked-logo.png';
 
 const Dashboard = () => {
   const { books, isLoading } = useBooks();
@@ -23,9 +24,12 @@ const Dashboard = () => {
     <div className="min-h-screen pb-24">
       {/* Header */}
       <header className="flex items-center justify-between p-4 pt-6">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">My Reading</h1>
-          <p className="text-sm text-muted-foreground">Track your reading journey</p>
+        <div className="flex items-center gap-2">
+          <img src={bookmarkedLogo} alt="Bookmarked logo" width={32} height={32} />
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Bookmarked</h1>
+            <p className="text-sm text-muted-foreground">Track your reading journey</p>
+          </div>
         </div>
         <div className="flex items-center gap-1">
           <ThemeToggle />
