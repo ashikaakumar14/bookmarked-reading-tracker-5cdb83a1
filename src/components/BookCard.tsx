@@ -1,8 +1,10 @@
 import { Book } from '@/hooks/useBooks';
+import { useBookCover } from '@/hooks/useBookCover';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Star } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const statusLabels: Record<string, string> = {
   reading: 'Reading',
@@ -23,44 +25,61 @@ interface BookCardProps {
 
 const BookCard = ({ book, onClick }: BookCardProps) => {
   const progress = book.total_pages ? Math.round((book.pages_read / book.total_pages) * 100) : 0;
+  const { coverUrl, loading: coverLoading } = useBookCover(book.title, book.author);
 
   return (
     <Card className="cursor-pointer transition-shadow hover:shadow-md" onClick={onClick}>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-foreground truncate">{book.title}</h3>
-            {book.author && <p className="text-sm text-muted-foreground truncate">{book.author}</p>}
-          </div>
-          <Badge variant="secondary" className={statusColors[book.status]}>
-            {statusLabels[book.status]}
-          </Badge>
+      <CardContent className="flex gap-3 p-3">
+        {/* Cover */}
+        <div className="h-24 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
+          {coverLoading ? (
+            <Skeleton className="h-full w-full" />
+          ) : coverUrl ? (
+            <img src={coverUrl} alt={book.title} className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground px-1 text-center leading-tight">
+              {book.title}
+            </div>
+          )}
         </div>
 
-        {book.status === 'reading' && book.total_pages && (
-          <div className="mt-3 space-y-1">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{book.pages_read} / {book.total_pages} pages</span>
-              <span>{progress}%</span>
+        {/* Info */}
+        <div className="min-w-0 flex-1 space-y-1">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-sm text-foreground truncate">{book.title}</h3>
+              {book.author && <p className="text-xs text-muted-foreground truncate">{book.author}</p>}
             </div>
-            <Progress value={progress} className="h-2" />
+            <Badge variant="secondary" className={`${statusColors[book.status]} text-[10px] shrink-0`}>
+              {statusLabels[book.status]}
+            </Badge>
           </div>
-        )}
 
-        {book.status === 'read' && book.rating && (
-          <div className="mt-2 flex items-center gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`h-3.5 w-3.5 ${i < book.rating! ? 'fill-primary text-primary' : 'text-muted'}`}
-              />
-            ))}
-          </div>
-        )}
+          {book.status === 'reading' && book.total_pages && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>{book.pages_read} / {book.total_pages} pages</span>
+                <span>{progress}%</span>
+              </div>
+              <Progress value={progress} className="h-1.5" />
+            </div>
+          )}
 
-        {book.genre && (
-          <p className="mt-2 text-xs text-muted-foreground">{book.genre}</p>
-        )}
+          {book.status === 'read' && book.rating && (
+            <div className="flex items-center gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-3 w-3 ${i < book.rating! ? 'fill-primary text-primary' : 'text-muted'}`}
+                />
+              ))}
+            </div>
+          )}
+
+          {book.genre && (
+            <p className="text-[11px] text-muted-foreground">{book.genre}</p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
