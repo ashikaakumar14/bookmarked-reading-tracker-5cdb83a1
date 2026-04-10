@@ -21,8 +21,6 @@ const AddBookForm = ({ onSuccess }: AddBookFormProps) => {
   const [author, setAuthor] = useState('');
   const [genre, setGenre] = useState('');
   const [status, setStatus] = useState<BookStatus>('want_to_read');
-  const [totalPages, setTotalPages] = useState('');
-  const [pagesRead, setPagesRead] = useState('');
   const [rating, setRating] = useState('');
   const [reviewNotes, setReviewNotes] = useState('');
 
@@ -34,8 +32,8 @@ const AddBookForm = ({ onSuccess }: AddBookFormProps) => {
         author: author.trim() || null,
         genre: genre.trim() || null,
         status,
-        total_pages: totalPages ? parseInt(totalPages) : null,
-        pages_read: pagesRead ? parseInt(pagesRead) : 0,
+        total_pages: null,
+        pages_read: 0,
         rating: rating ? parseInt(rating) : null,
         review_notes: reviewNotes.trim() || null,
         start_date: status === 'reading' ? new Date().toISOString().split('T')[0] : null,
@@ -73,16 +71,6 @@ const AddBookForm = ({ onSuccess }: AddBookFormProps) => {
               <SelectItem value="read">Read</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label htmlFor="totalPages">Total Pages</Label>
-          <Input id="totalPages" type="number" min="0" value={totalPages} onChange={e => setTotalPages(e.target.value)} placeholder="300" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="pagesRead">Pages Read</Label>
-          <Input id="pagesRead" type="number" min="0" value={pagesRead} onChange={e => setPagesRead(e.target.value)} placeholder="0" />
         </div>
       </div>
       {status === 'read' && (
