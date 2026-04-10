@@ -7,6 +7,7 @@ import { BookOpen, TrendingUp, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ThemeToggle from '@/components/ThemeToggle';
+import ReadingChat from '@/components/ReadingChat';
 
 const Dashboard = () => {
   const { books, isLoading } = useBooks();
@@ -99,6 +100,8 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      <ReadingChat />
     </div>
   );
 };
