@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, TrendingUp, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const ringColors = [
   'hsl(25, 75%, 47%)',
@@ -33,9 +34,12 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-foreground">My Reading</h1>
           <p className="text-sm text-muted-foreground">Track your reading journey</p>
         </div>
-        <Button variant="ghost" size="icon" onClick={signOut}>
-          <LogOut className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <Button variant="ghost" size="icon" onClick={signOut}>
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
       </header>
 
       <div className="px-4 space-y-5">
