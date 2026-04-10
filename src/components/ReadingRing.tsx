@@ -8,12 +8,12 @@ interface ConcentricRingsProps {
 }
 
 const ringColors = [
-  { dark: 'hsl(348, 83%, 47%)', light: 'hsl(348, 50%, 88%)' },   // amaranth
-  { dark: 'hsl(320, 55%, 45%)', light: 'hsl(320, 35%, 86%)' },   // deep rose
-  { dark: 'hsl(15, 70%, 50%)',  light: 'hsl(15, 45%, 87%)' },    // warm coral
-  { dark: 'hsl(280, 45%, 50%)', light: 'hsl(280, 30%, 86%)' },   // plum
-  { dark: 'hsl(355, 65%, 55%)', light: 'hsl(355, 40%, 88%)' },   // crimson rose
-  { dark: 'hsl(340, 60%, 40%)', light: 'hsl(340, 35%, 85%)' },   // burgundy
+  { dark: 'hsl(16, 75%, 47%)',  light: 'hsl(16, 50%, 88%)' },    // rust
+  { dark: 'hsl(30, 65%, 45%)',  light: 'hsl(30, 40%, 87%)' },    // burnt sienna
+  { dark: 'hsl(8, 60%, 42%)',   light: 'hsl(8, 40%, 86%)' },     // terracotta
+  { dark: 'hsl(45, 55%, 45%)',  light: 'hsl(45, 35%, 88%)' },    // amber
+  { dark: 'hsl(0, 50%, 40%)',   light: 'hsl(0, 35%, 86%)' },     // brick red
+  { dark: 'hsl(22, 70%, 50%)',  light: 'hsl(22, 45%, 87%)' },    // copper
 ];
 
 const ConcentricRings = ({ books }: ConcentricRingsProps) => {
