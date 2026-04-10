@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, TrendingUp, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const ringColors = [
   'hsl(25, 75%, 47%)',
