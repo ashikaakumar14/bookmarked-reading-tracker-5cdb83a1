@@ -20,6 +20,7 @@ const AddBookForm = ({ onSuccess }: AddBookFormProps) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [genre, setGenre] = useState('');
+  const [totalPages, setTotalPages] = useState('');
   const [status, setStatus] = useState<BookStatus>('want_to_read');
   const [rating, setRating] = useState('');
   const [reviewNotes, setReviewNotes] = useState('');
@@ -32,7 +33,7 @@ const AddBookForm = ({ onSuccess }: AddBookFormProps) => {
         author: author.trim() || null,
         genre: genre.trim() || null,
         status,
-        total_pages: null,
+        total_pages: totalPages ? parseInt(totalPages) : null,
         pages_read: 0,
         rating: rating ? parseInt(rating) : null,
         review_notes: reviewNotes.trim() || null,
@@ -55,6 +56,10 @@ const AddBookForm = ({ onSuccess }: AddBookFormProps) => {
       <div className="space-y-2">
         <Label htmlFor="author">Author</Label>
         <Input id="author" value={author} onChange={e => setAuthor(e.target.value)} placeholder="Author name" />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="totalPages">Total Pages</Label>
+        <Input id="totalPages" type="number" min="1" value={totalPages} onChange={e => setTotalPages(e.target.value)} placeholder="e.g. 320" />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
