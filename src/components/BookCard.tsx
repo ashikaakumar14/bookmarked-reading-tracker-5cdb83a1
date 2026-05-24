@@ -45,14 +45,10 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
               }}
             />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center rounded-md bg-gradient-to-b from-primary/80 to-primary/40 border border-white/20 shadow-sm px-1 text-center">
-              <span className="font-semibold text-[10px] leading-tight text-white line-clamp-4">
-                {book.title}
-              </span>
+            <div className="flex h-full w-full flex-col items-center justify-center rounded-md bg-gradient-to-b from-primary/80 to-primary/40 px-1 py-2 text-center shadow-sm border border-white/10">
+              <p className="text-[10px] font-semibold leading-tight text-white line-clamp-4">{book.title}</p>
               {book.author && (
-                <span className="mt-0.5 text-[8px] text-white/70 truncate w-full">
-                  {book.author}
-                </span>
+                <p className="mt-1 text-[8px] text-white/70 truncate w-full text-center">{book.author}</p>
               )}
             </div>
           )}
