@@ -45,12 +45,32 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
               }}
             />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center bg-accent px-2 py-3 text-center">
-              <p className="text-[10px] font-semibold leading-tight text-white line-clamp-4">
+            <div
+              className="flex h-full w-full flex-col items-center justify-center px-2 py-3 text-center rounded-md"
+              style={{ backgroundColor: '#C1583A' }}
+            >
+              <p
+                style={{
+                  color: '#ffffff',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  lineHeight: '1.3',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                }}
+                className="line-clamp-4 px-1"
+              >
                 {book.title}
               </p>
               {book.author && (
-                <p className="mt-1.5 text-[8px] text-white/70 leading-tight line-clamp-2">
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.85)',
+                    fontSize: '8px',
+                    marginTop: '6px',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                  }}
+                  className="line-clamp-2 px-1"
+                >
                   {book.author}
                 </p>
               )}
