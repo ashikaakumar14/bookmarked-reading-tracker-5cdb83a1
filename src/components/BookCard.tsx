@@ -35,7 +35,15 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
           {coverLoading ? (
             <Skeleton className="h-full w-full" />
           ) : coverUrl ? (
-            <img src={coverUrl} alt={book.title} className="h-full w-full object-cover" />
+            <img
+              src={coverUrl}
+              alt={book.title}
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                const fallback = `https://covers.openlibrary.org/b/title/${book.title.replace(/\s+/g, '_')}-M.jpg`;
+                if (e.currentTarget.src !== fallback) e.currentTarget.src = fallback;
+              }}
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground px-1 text-center leading-tight">
               {book.title}

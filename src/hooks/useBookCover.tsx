@@ -21,7 +21,10 @@ export const useBookCover = (title: string, author?: string | null) => {
       .then(r => r.json())
       .then(data => {
         if (cancelled) return;
-        const url = data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail?.replace('http://', 'https://') || null;
+        let url = data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail?.replace('http://', 'https://') || null;
+        if (!url) {
+          url = `https://covers.openlibrary.org/b/title/${title.replace(/\s+/g, '_')}-M.jpg`;
+        }
         coverCache.set(key, url);
         setCoverUrl(url);
       })
