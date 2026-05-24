@@ -31,7 +31,7 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
     <Card className="cursor-pointer transition-shadow hover:shadow-md" onClick={onClick}>
       <CardContent className="flex gap-3 p-3">
         {/* Cover */}
-        <div className="h-24 w-16 shrink-0 overflow-hidden rounded-md">
+        <div className="h-24 w-16 shrink-0 overflow-hidden rounded-md bg-accent">
           {coverLoading ? (
             <Skeleton className="h-full w-full" />
           ) : coverUrl ? (
@@ -45,12 +45,12 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
               }}
             />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center bg-primary px-2 py-3 text-center">
-              <p className="text-[10px] font-semibold leading-tight text-primary-foreground line-clamp-4">
+            <div className="flex h-full w-full flex-col items-center justify-center bg-accent px-2 py-3 text-center">
+              <p className="text-[10px] font-semibold leading-tight text-white line-clamp-4">
                 {book.title}
               </p>
               {book.author && (
-                <p className="mt-1.5 text-[8px] text-primary-foreground/70 leading-tight line-clamp-2">
+                <p className="mt-1.5 text-[8px] text-white/70 leading-tight line-clamp-2">
                   {book.author}
                 </p>
               )}
