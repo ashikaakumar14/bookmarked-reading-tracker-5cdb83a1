@@ -1,18 +1,25 @@
-import { useBooks } from '@/hooks/useBooks';
+import { useState } from 'react';
+import { useBooks, Book } from '@/hooks/useBooks';
 import { useAuth } from '@/hooks/useAuth';
 import ConcentricRings from '@/components/ReadingRing';
 import BookCard from '@/components/BookCard';
 import { Card, CardContent } from '@/components/ui/card';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { BookOpen, TrendingUp, LogOut, Hash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ThemeToggle from '@/components/ThemeToggle';
 import ReadingChat from '@/components/ReadingChat';
+import { useToast } from '@/hooks/use-toast';
 import bookmarkedLogo from '@/assets/bookmarked-logo.png';
 
 const Dashboard = () => {
-  const { books, isLoading } = useBooks();
+  const { books, isLoading, updateBook, deleteBook } = useBooks();
   const { signOut } = useAuth();
+  const { toast } = useToast();
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
   const currentlyReading = books.filter(b => b.status === 'reading');
   const booksReadThisYear = books.filter(b => {
@@ -32,6 +39,29 @@ const Dashboard = () => {
     monthBooks.forEach(b => { if (b.genre) counts[b.genre] = (counts[b.genre] || 0) + 1; });
     return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
   })();
+
+  const handleUpdateBook = async (updates: Partial<Book>) => {
+    if (!selectedBook) return;
+    try {
+      await updateBook.mutateAsync({ id: selectedBook.id, ...updates });
+      setSelectedBook(prev => prev ? { ...prev, ...updates } : null);
+      toast({ title: 'Book updated!' });
+    } catch {
+      toast({ title: 'Update failed', variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteBook = async () => {
+    if (!selectedBook) return;
+    if (!window.confirm(`Delete "${selectedBook.title}"? This cannot be undone.`)) return;
+    try {
+      await deleteBook.mutateAsync(selectedBook.id);
+      setSelectedBook(null);
+      toast({ title: 'Book deleted' });
+    } catch {
+      toast({ title: 'Delete failed', variant: 'destructive' });
+    }
+  };
 
   return (
     <div className="min-h-screen pb-24">
@@ -122,12 +152,50 @@ const Dashboard = () => {
             <h2 className="mb-3 text-base font-semibold text-foreground">In Progress</h2>
             <div className="space-y-3">
               {currentlyReading.map(book => (
-                <BookCard key={book.id} book={book} />
+                <BookCard key={book.id} book={book} onClick={() => setSelectedBook(book)} />
               ))}
             </div>
           </div>
         )}
       </div>
+
+      <Sheet open={!!selectedBook} onOpenChange={open => !open && setSelectedBook(null)}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
+          {selectedBook && (
+            <>
+              <SheetHeader>
+                <SheetTitle>{selectedBook.title}</SheetTitle>
+              </SheetHeader>
+              <div className="mt-4 space-y-4">
+                {selectedBook.author && (
+                  <p className="text-sm text-muted-foreground">by {selectedBook.author}</p>
+                )}
+
+                {selectedBook.total_pages && (
+                  <div className="space-y-2">
+                    <Label>Pages read: {selectedBook.pages_read} / {selectedBook.total_pages}</Label>
+                    <Slider
+                      value={[selectedBook.pages_read]}
+                      max={selectedBook.total_pages}
+                      step={1}
+                      onValueCommit={([v]) => handleUpdateBook({ pages_read: v })}
+                    />
+                  </div>
+                )}
+
+                <Button
+                  variant="destructive"
+                  className="w-full"
+                  onClick={handleDeleteBook}
+                  disabled={deleteBook.isPending}
+                >
+                  {deleteBook.isPending ? 'Deleting...' : 'Delete Book'}
+                </Button>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
 
       <ReadingChat />
     </div>
