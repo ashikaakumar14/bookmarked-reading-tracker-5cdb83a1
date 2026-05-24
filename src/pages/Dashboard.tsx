@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useBooks, Book } from '@/hooks/useBooks';
 import { useAuth } from '@/hooks/useAuth';
 import ConcentricRings from '@/components/ReadingRing';
@@ -6,7 +6,8 @@ import BookCard from '@/components/BookCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
 import { BookOpen, TrendingUp, LogOut, Hash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,6 +21,15 @@ const Dashboard = () => {
   const { signOut } = useAuth();
   const { toast } = useToast();
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [pagesReadInput, setPagesReadInput] = useState('');
+  const [totalPagesInput, setTotalPagesInput] = useState('');
+
+  useEffect(() => {
+    if (selectedBook) {
+      setPagesReadInput(String(selectedBook.pages_read));
+      setTotalPagesInput(selectedBook.total_pages ? String(selectedBook.total_pages) : '');
+    }
+  }, [selectedBook]);
 
   const currentlyReading = books.filter(b => b.status === 'reading');
   const booksReadThisYear = books.filter(b => {
@@ -40,16 +50,45 @@ const Dashboard = () => {
     return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
   })();
 
-  const handleUpdateBook = async (updates: Partial<Book>) => {
-    if (!selectedBook) return;
+  const savePagesRead = async () => {
+    if (!selectedBook?.total_pages) return;
+    const value = parseInt(pagesReadInput, 10);
+    if (isNaN(value) || value < 0) {
+      setPagesReadInput(String(selectedBook.pages_read));
+      return;
+    }
+    const clamped = Math.min(value, selectedBook.total_pages);
+    if (clamped === selectedBook.pages_read) return;
     try {
-      await updateBook.mutateAsync({ id: selectedBook.id, ...updates });
-      setSelectedBook(prev => prev ? { ...prev, ...updates } : null);
+      await updateBook.mutateAsync({ id: selectedBook.id, pages_read: clamped });
+      setSelectedBook(prev => prev ? { ...prev, pages_read: clamped } : null);
+      setPagesReadInput(String(clamped));
       toast({ title: 'Book updated!' });
     } catch {
       toast({ title: 'Update failed', variant: 'destructive' });
     }
   };
+
+  const saveTotalPages = async () => {
+    if (!selectedBook) return;
+    const value = parseInt(totalPagesInput, 10);
+    if (isNaN(value) || value < 1) {
+      setTotalPagesInput('');
+      return;
+    }
+    if (value === selectedBook.total_pages) return;
+    try {
+      await updateBook.mutateAsync({ id: selectedBook.id, total_pages: value });
+      setSelectedBook(prev => prev ? { ...prev, total_pages: value } : null);
+      toast({ title: 'Book updated!' });
+    } catch {
+      toast({ title: 'Update failed', variant: 'destructive' });
+    }
+  };
+
+  const progressPercent = selectedBook?.total_pages
+    ? Math.min(100, Math.round(((parseInt(pagesReadInput, 10) || 0) / selectedBook.total_pages) * 100))
+    : 0;
 
   const handleDeleteBook = async () => {
     if (!selectedBook) return;
@@ -171,15 +210,41 @@ const Dashboard = () => {
                   <p className="text-sm text-muted-foreground">by {selectedBook.author}</p>
                 )}
 
-                {selectedBook.total_pages && (
+                {!selectedBook.total_pages ? (
                   <div className="space-y-2">
-                    <Label>Pages read: {selectedBook.pages_read} / {selectedBook.total_pages}</Label>
-                    <Slider
-                      value={[selectedBook.pages_read]}
-                      max={selectedBook.total_pages}
-                      step={1}
-                      onValueCommit={([v]) => handleUpdateBook({ pages_read: v })}
+                    <Label htmlFor="total-pages">Set total pages</Label>
+                    <Input
+                      id="total-pages"
+                      type="number"
+                      min={1}
+                      value={totalPagesInput}
+                      onChange={e => setTotalPagesInput(e.target.value)}
+                      onBlur={saveTotalPages}
+                      onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+                      placeholder="e.g. 320"
                     />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label htmlFor="pages-read">Current page</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="pages-read"
+                        type="number"
+                        min={0}
+                        max={selectedBook.total_pages}
+                        value={pagesReadInput}
+                        onChange={e => setPagesReadInput(e.target.value)}
+                        onBlur={savePagesRead}
+                        onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+                        className="w-24"
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        / {selectedBook.total_pages} pages
+                      </span>
+                    </div>
+                    <Progress value={progressPercent} className="h-2" />
+                    <p className="text-xs text-muted-foreground">{progressPercent}% complete</p>
                   </div>
                 )}
 
