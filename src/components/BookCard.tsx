@@ -23,6 +23,51 @@ interface BookCardProps {
   onClick?: () => void;
 }
 
+const BookCoverFallback = ({ title, author }: { title: string; author?: string | null }) => (
+  <div style={{
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#C1583A',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '6px',
+    boxSizing: 'border-box'
+  }}>
+    <span style={{
+      color: '#FFFFFF',
+      fontSize: '10px',
+      fontWeight: 700,
+      lineHeight: 1.3,
+      textAlign: 'center',
+      overflow: 'hidden',
+      display: '-webkit-box',
+      WebkitLineClamp: 4,
+      WebkitBoxOrient: 'vertical',
+      textShadow: '0px 1px 3px rgba(0,0,0,0.5)'
+    }}>
+      {title}
+    </span>
+    {author && (
+      <span style={{
+        color: '#FFFFFF',
+        opacity: 0.8,
+        fontSize: '8px',
+        marginTop: '5px',
+        textAlign: 'center',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        width: '100%',
+        textShadow: '0px 1px 2px rgba(0,0,0,0.4)'
+      }}>
+        {author}
+      </span>
+    )}
+  </div>
+);
+
 const BookCard = ({ book, onClick }: BookCardProps) => {
   const progress = book.total_pages ? Math.round((book.pages_read / book.total_pages) * 100) : 0;
   const { coverUrl, loading: coverLoading } = useBookCover(book.title, book.author);
@@ -45,36 +90,7 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
               }}
             />
           ) : (
-            <div
-              className="flex h-full w-full flex-col items-center justify-center px-2 py-3 text-center rounded-md"
-              style={{ backgroundColor: '#C1583A' }}
-            >
-              <p
-                style={{
-                  color: '#ffffff',
-                  fontSize: '10px',
-                  fontWeight: '700',
-                  lineHeight: '1.3',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                }}
-                className="line-clamp-4 px-1"
-              >
-                {book.title}
-              </p>
-              {book.author && (
-                <p
-                  style={{
-                    color: 'rgba(255,255,255,0.85)',
-                    fontSize: '8px',
-                    marginTop: '6px',
-                    textShadow: '0 1px 2px rgba(0,0,0,0.2)',
-                  }}
-                  className="line-clamp-2 px-1"
-                >
-                  {book.author}
-                </p>
-              )}
-            </div>
+            <BookCoverFallback title={book.title} author={book.author} />
           )}
         </div>
 
