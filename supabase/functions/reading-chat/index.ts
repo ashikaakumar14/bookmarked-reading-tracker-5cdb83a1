@@ -65,8 +65,8 @@ serve(async (req) => {
     // Build reading context summary
     const readingContext = buildReadingContext(books || [], now, currentYear);
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!anthropicApiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
 
     const systemPrompt = `You are a friendly, insightful reading assistant. You have access to the user's personal reading data below. Use ONLY this data to answer questions about their reading habits, patterns, and to provide personalized recommendations.
 
@@ -81,15 +81,18 @@ Guidelines:
 - Use markdown formatting for readability.
 - Today's date is ${now.toISOString().split("T")[0]}.`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
+        "x-api-key": anthropicApiKey,
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [{ role: "system", content: systemPrompt }, ...messages],
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages,
         stream: true,
       }),
     });
@@ -102,13 +105,13 @@ Guidelines:
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add funds." }), {
+        return new Response(JSON.stringify({ error: "Anthropic API credits exhausted." }), {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+      console.error("Anthropic API error:", response.status, t);
       return new Response(JSON.stringify({ error: "AI service error" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -89,9 +89,12 @@ const ReadingChat = () => {
 
           try {
             const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (content) {
-              assistantSoFar += content;
+            if (parsed.type === 'message_stop') {
+              streamDone = true;
+              break;
+            }
+            if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+              assistantSoFar += parsed.delta.text;
               const snapshot = assistantSoFar;
               setMessages(prev => {
                 const last = prev[prev.length - 1];
