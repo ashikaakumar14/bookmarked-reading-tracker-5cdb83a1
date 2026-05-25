@@ -1,10 +1,8 @@
 import { Book } from '@/hooks/useBooks';
-import { useBookCover } from '@/hooks/useBookCover';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Star } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const statusLabels: Record<string, string> = {
   reading: 'Reading',
@@ -70,28 +68,13 @@ const BookCoverFallback = ({ title, author }: { title: string; author?: string |
 
 const BookCard = ({ book, onClick }: BookCardProps) => {
   const progress = book.total_pages ? Math.round((book.pages_read / book.total_pages) * 100) : 0;
-  const { coverUrl, loading: coverLoading } = useBookCover(book.title, book.author);
 
   return (
     <Card className="cursor-pointer transition-shadow hover:shadow-md" onClick={onClick}>
       <CardContent className="flex gap-3 p-3">
         {/* Cover */}
-        <div className="h-24 w-16 shrink-0 overflow-hidden rounded-md bg-accent">
-          {coverLoading ? (
-            <Skeleton className="h-full w-full" />
-          ) : coverUrl ? (
-            <img
-              src={coverUrl}
-              alt={book.title}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                const fallback = `https://covers.openlibrary.org/b/title/${book.title.replace(/\s+/g, '_')}-M.jpg`;
-                if (e.currentTarget.src !== fallback) e.currentTarget.src = fallback;
-              }}
-            />
-          ) : (
-            <BookCoverFallback title={book.title} author={book.author} />
-          )}
+        <div className="h-24 w-16 shrink-0 overflow-hidden rounded-md">
+          <BookCoverFallback title={book.title} author={book.author} />
         </div>
 
         {/* Info */}
